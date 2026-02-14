@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hey… One Thing 💗</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(160deg,#ff7aa2,#ff4f81);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: system-ui, sans-serif;
+    overflow:hidden;
+}
+
+.card{
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    padding:36px 26px;
+    border-radius:22px;
+    text-align:center;
+    color:white;
+    max-width:340px;
+    width:92%;
+    box-shadow:0 25px 45px rgba(0,0,0,0.25);
+}
+
+.buttons{
+    margin-top:28px;
+    position:relative;
+    height:230px;
+}
+
+button{
+    padding:12px 24px;
+    border-radius:26px;
+    border:none;
+    font-size:15px;
+    cursor:pointer;
+}
+
+#yes{
+    background:white;
+    color:#ff4f81;
+    position:absolute;
+    left:50%;
+    top:10px;
+    transform:translateX(-50%);
+}
+
+#maybe{
+    background:rgba(255,255,255,0.25);
+    border:1.5px solid rgba(255,255,255,0.7);
+    color:white;
+    position:absolute;
+    left:50%;
+    top:75px;
+    transform:translateX(-50%);
+}
+
+#no{
+    background:transparent;
+    border:2px solid rgba(255,255,255,0.85);
+    color:white;
+    position:absolute;
+    left:40%;
+    top:150px;
+}
+
+#final{ display:none; }
+
+.dot{
+    position:absolute;
+    background:rgba(255,255,255,0.4);
+    border-radius:50%;
+    animation:floatUp 7s linear infinite;
+}
+
+@keyframes floatUp{
+    from{transform:translateY(100vh);}
+    to{transform:translateY(-10vh);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ✅ NETLIFY FORM -->
+<form name="response" method="POST" data-netlify="true" hidden>
+    <input type="hidden" name="form-name" value="response">
+    <input type="hidden" name="answer" id="answerInput">
+</form>
+
+<div class="card" id="start">
+    <h1>Hey Pratha 🌸</h1>
+    <p>
+        I really like you.<br>
+        So I wanted to ask you honestly…
+    </p>
+
+    <div class="buttons" id="btnArea">
+        <button id="yes">Would you like to be my girlfriend? 💗</button>
+        <button id="maybe">Maybe… 🤍</button>
+        <button id="no">No</button>
+    </div>
+
+    <p style="font-size:0.9em;opacity:.8;">
+        No pressure. Take your time 🤍
+    </p>
+</div>
+
+<div class="card" id="final">
+    <h1 id="finalTitle"></h1>
+    <p id="finalText"></p>
+</div>
+
+<script>
+const yesBtn = document.getElementById("yes");
+const maybeBtn = document.getElementById("maybe");
+const noBtn = document.getElementById("no");
+const start = document.getElementById("start");
+const final = document.getElementById("final");
+const finalTitle = document.getElementById("finalTitle");
+const finalText = document.getElementById("finalText");
+const area = document.getElementById("btnArea");
+
+const noTexts = [
+  "It's okay 🤍",
+  "Take your time 🙂",
+  "No pressure at all",
+  "Whatever feels right"
+];
+
+let index = 0;
+
+/* ⭐ BACKGROUND SUBMIT (NO 404) */
+function sendAnswer(answer){
+    document.getElementById("answerInput").value = answer;
+
+    fetch("/", {
+        method: "POST",
+        headers: { "Content-Type":"application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+            "form-name":"response",
+            "answer":answer
+        }).toString()
+    });
+}
+
+function moveNoButton(){
+    const w = area.clientWidth - 100;
+    const h = area.clientHeight - 70;
+    noBtn.style.left = Math.random()*w + "px";
+    noBtn.style.top = Math.random()*h + "px";
+}
+
+/* NO */
+noBtn.addEventListener("click", () => {
+    index = (index + 1) % noTexts.length;
+    noBtn.innerText = noTexts[index];
+    moveNoButton();
+    sendAnswer("NO");
+});
+
+/* MAYBE */
+maybeBtn.addEventListener("click", () => {
+    sendAnswer("MAYBE 🤍");
+    finalTitle.innerText = "That’s okay 🤍";
+    finalText.innerHTML = "Take your time.<br>I appreciate your honesty.";
+    start.style.display = "none";
+    final.style.display = "block";
+});
+
+/* YES */
+yesBtn.addEventListener("click", () => {
+    sendAnswer("YES 💗");
+    finalTitle.innerText = "You made me smile 🥹";
+    finalText.innerHTML = "I’m really happy you said yes 💖";
+    start.style.display = "none";
+    final.style.display = "block";
+});
+
+/* floating dots */
+setInterval(()=>{
+    const dot = document.createElement("div");
+    dot.className = "dot";
+    const size = Math.random()*8 + 4;
+    dot.style.width = size+"px";
+    dot.style.height = size+"px";
+    dot.style.left = Math.random()*100+"vw";
+    document.body.appendChild(dot);
+    setTimeout(()=>dot.remove(),7000);
+},350);
+
+</script>
+</body>
+</html>
