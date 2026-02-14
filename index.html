@@ -107,33 +107,33 @@ button {
 
 <body>
 
-<!-- ✅ NETLIFY FORM (BACKEND) -->
-<form name="response" method="POST" data-netlify="true">
+<!-- 🔒 NETLIFY FORM (hidden) -->
+<form name="response" method="POST" data-netlify="true" hidden>
   <input type="hidden" name="form-name" value="response">
-  <input type="hidden" name="answer" id="answerInput">
+  <input type="text" name="answer">
+</form>
 
-  <div class="card" id="start">
+<div class="card" id="start">
     <h1>Hey Pratha 🌸</h1>
     <p>
-      I really like you.<br>
-      So I wanted to ask you honestly…
+        I really like you.<br>
+        So I wanted to ask you honestly…
     </p>
 
     <div class="buttons" id="btnArea">
-      <button type="button" id="yes">Be my girlfriend 💗</button>
-      <button type="button" id="maybe">Maybe… 🤍</button>
-      <button type="button" id="no">No</button>
+        <button id="yes">Would you like to be my girlfriend? 💗</button>
+        <button id="maybe">Maybe… 🤍</button>
+        <button id="no">No</button>
     </div>
 
     <p style="margin-top:12px;font-size:0.9em;opacity:0.8;">
       No pressure. Take your time 🤍
     </p>
-  </div>
-</form>
+</div>
 
 <div class="card" id="final">
-  <h1 id="finalTitle"></h1>
-  <p id="finalText"></p>
+    <h1 id="finalTitle"></h1>
+    <p id="finalText"></p>
 </div>
 
 <script>
@@ -147,19 +147,29 @@ const finalText = document.getElementById("finalText");
 const area = document.getElementById("btnArea");
 
 const noTexts = [
-  "Think again 😅",
-  "Just hear me out 🥺",
-  "Give me a chance?",
-  "Okay… last try 🙈"
+  "It's okay 🤍",
+  "Take your time 🙂",
+  "No pressure at all",
+  "Whatever feels right"
 ];
 
 let index = 0;
 
+/* send answer silently (NO redirect, NO 404) */
 function sendAnswer(answer) {
-  document.getElementById("answerInput").value = answer;
-  document.forms["response"].submit();
+  fetch("/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({
+      "form-name": "response",
+      "answer": answer
+    })
+  });
 }
 
+/* move NO button */
 function moveNoButton() {
   const w = area.clientWidth - 100;
   const h = area.clientHeight - 80;
@@ -181,7 +191,8 @@ noBtn.addEventListener("click", () => {
 maybeBtn.addEventListener("click", () => {
   sendAnswer("MAYBE 🤍");
   finalTitle.innerText = "That’s okay 🤍";
-  finalText.innerHTML = "Take your time.<br>I really appreciate your honesty.";
+  finalText.innerHTML =
+    "Take your time.<br>I really appreciate your honesty.";
   start.style.display = "none";
   final.style.display = "block";
 });
@@ -190,7 +201,8 @@ maybeBtn.addEventListener("click", () => {
 yesBtn.addEventListener("click", () => {
   sendAnswer("YES 💗");
   finalTitle.innerText = "You made me smile 🥹";
-  finalText.innerHTML = "I’m really happy you said yes.<br>I promise I’ll treat you right 💖";
+  finalText.innerHTML =
+    "I’m really happy you said yes.<br>I’ll always respect your feelings.";
   start.style.display = "none";
   final.style.display = "block";
 });
