@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hey… One Thing 💗</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(160deg, #ff7aa2, #ff4f81);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, sans-serif;
+    overflow: hidden;
+}
+
+.card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    padding: 36px 26px;
+    border-radius: 22px;
+    text-align: center;
+    color: white;
+    max-width: 340px;
+    width: 92%;
+    box-shadow: 0 25px 45px rgba(0,0,0,0.25);
+}
+
+.card h1 {
+    font-size: 1.6em;
+    margin-bottom: 8px;
+}
+
+.card p {
+    font-size: 1em;
+    opacity: 0.9;
+}
+
+.buttons {
+    margin-top: 30px;
+    position: relative;
+    height: 260px;
+}
+
+button {
+    padding: 12px 24px;
+    border-radius: 26px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+/* YES */
+#yes {
+    background: white;
+    color: #ff4f81;
+    font-weight: 600;
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    transform: translateX(-50%);
+}
+
+/* MAYBE */
+#maybe {
+    background: rgba(255,255,255,0.25);
+    color: white;
+    border: 1.5px solid rgba(255,255,255,0.7);
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translateX(-50%);
+}
+
+/* NO */
+#no {
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.85);
+    color: white;
+    position: absolute;
+    left: 40%;
+    top: 190px;
+}
+
+#final { display: none; }
+
+/* floating dots */
+.dot {
+    position: absolute;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+    animation: floatUp 7s linear infinite;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh); }
+    to { transform: translateY(-10vh); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ✅ NETLIFY FORM (BACKEND) -->
+<form name="response" method="POST" data-netlify="true">
+  <input type="hidden" name="form-name" value="response">
+  <input type="hidden" name="answer" id="answerInput">
+
+  <div class="card" id="start">
+    <h1>Hey Pratha 🌸</h1>
+    <p>
+      I really like you.<br>
+      So I wanted to ask you honestly…
+    </p>
+
+    <div class="buttons" id="btnArea">
+      <button type="button" id="yes">Be my girlfriend 💗</button>
+      <button type="button" id="maybe">Maybe… 🤍</button>
+      <button type="button" id="no">No</button>
+    </div>
+
+    <p style="margin-top:12px;font-size:0.9em;opacity:0.8;">
+      No pressure. Take your time 🤍
+    </p>
+  </div>
+</form>
+
+<div class="card" id="final">
+  <h1 id="finalTitle"></h1>
+  <p id="finalText"></p>
+</div>
+
+<script>
+const yesBtn = document.getElementById("yes");
+const maybeBtn = document.getElementById("maybe");
+const noBtn = document.getElementById("no");
+const start = document.getElementById("start");
+const final = document.getElementById("final");
+const finalTitle = document.getElementById("finalTitle");
+const finalText = document.getElementById("finalText");
+const area = document.getElementById("btnArea");
+
+const noTexts = [
+  "Think again 😅",
+  "Just hear me out 🥺",
+  "Give me a chance?",
+  "Okay… last try 🙈"
+];
+
+let index = 0;
+
+function sendAnswer(answer) {
+  document.getElementById("answerInput").value = answer;
+  document.forms["response"].submit();
+}
+
+function moveNoButton() {
+  const w = area.clientWidth - 100;
+  const h = area.clientHeight - 80;
+  const x = Math.random() * w;
+  const y = Math.random() * h;
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+/* NO */
+noBtn.addEventListener("click", () => {
+  index = (index + 1) % noTexts.length;
+  noBtn.innerText = noTexts[index];
+  moveNoButton();
+  sendAnswer("NO");
+});
+
+/* MAYBE */
+maybeBtn.addEventListener("click", () => {
+  sendAnswer("MAYBE 🤍");
+  finalTitle.innerText = "That’s okay 🤍";
+  finalText.innerHTML = "Take your time.<br>I really appreciate your honesty.";
+  start.style.display = "none";
+  final.style.display = "block";
+});
+
+/* YES */
+yesBtn.addEventListener("click", () => {
+  sendAnswer("YES 💗");
+  finalTitle.innerText = "You made me smile 🥹";
+  finalText.innerHTML = "I’m really happy you said yes.<br>I promise I’ll treat you right 💖";
+  start.style.display = "none";
+  final.style.display = "block";
+});
+
+/* floating dots */
+setInterval(() => {
+  const dot = document.createElement("div");
+  dot.className = "dot";
+  const size = Math.random() * 8 + 4;
+  dot.style.width = size + "px";
+  dot.style.height = size + "px";
+  dot.style.left = Math.random() * 100 + "vw";
+  document.body.appendChild(dot);
+  setTimeout(() => dot.remove(), 7000);
+}, 350);
+</script>
+
+</body>
+</html>
